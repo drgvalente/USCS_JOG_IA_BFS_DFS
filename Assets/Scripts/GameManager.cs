@@ -24,13 +24,15 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool hasStart = false;
     [HideInInspector]
+    public Node start;
+    [HideInInspector]
     public bool hasGoal = false;
+    [HideInInspector]
+    public Node goal;
 
     [Header("Search")]
     public searchType searchType = searchType.DFS;
-    public Stack<Node> stackDFS = new Stack<Node>(); // caminho do DFS
-    public Queue<Node> queueBFS = new Queue<Node>(); // caminho do BFS
-    public HashSet<Node> visitedNodes = new HashSet<Node>(); // nós visitados
+    public Data data;
     public float searchDelay = 1f; // atraso entre cada passo da busca
     float searchTimer = 0f;
 
@@ -61,7 +63,7 @@ public class GameManager : MonoBehaviour
                 if (searchType == searchType.DFS)
                 {
                     DFS.PerformSearchStep();
-                    UnityEngine.Debug.Log(stackDFS.Count);
+                    UnityEngine.Debug.Log(data.stackDFS.Count);
                 }
                 else if (searchType == searchType.BFS)
                 {
