@@ -29,6 +29,10 @@ public class BFS : MonoBehaviour
         {
             // Para a busca pois não há caminho possível
             gameManager.isSearching = false;
+            // Informa ao usuário que não foi possível encontrar um caminho
+            UnityEngine.Debug.Log("BFS: Nenhum caminho encontrado para o objetivo!");
+            // Pinta todos os nós visitados como blackListed quando não há caminho
+            PaintVisitedNodesWhenNoPath(data.visitedNodes);
             // Retorna sem continuar a execução
             return;
         }
@@ -152,6 +156,22 @@ public class BFS : MonoBehaviour
     {
         // Remove todos os elementos do dicionário de pais
         parentMap.Clear();
+    }
+    
+    // Método estático para pintar nós visitados quando não há caminho disponível
+    static void PaintVisitedNodesWhenNoPath(HashSet<Node> visitedNodes)
+    {
+        // Percorre todos os nós visitados durante a busca
+        foreach (Node visitedNode in visitedNodes)
+        {
+            // Verifica se o nó visitado não é Start nem Goal
+            if (visitedNode.nodeType != NodeType.Start && 
+                visitedNode.nodeType != NodeType.Goal)
+            {
+                // Aplica o material blackListed para indicar nó explorado sem caminho
+                visitedNode.GetComponent<Renderer>().material = visitedNode.blackListed;
+            }
+        }
     }
     
     // Método estático para pintar nós visitados que não fazem parte do caminho final

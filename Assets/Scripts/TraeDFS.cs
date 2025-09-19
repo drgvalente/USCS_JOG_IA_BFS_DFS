@@ -99,6 +99,8 @@ public class TraeDFS : MonoBehaviour
         }
         
         // Se chegou aqui, a pilha está vazia e não encontrou o objetivo
+        // Informa ao usuário que não foi possível encontrar um caminho
+        Debug.Log("TraeDFS: Nenhum caminho encontrado para o objetivo!");
         isSearching = false; // Marca que a busca foi concluída sem sucesso
     }
 }

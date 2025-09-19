@@ -94,6 +94,8 @@ public class DFS : MonoBehaviour
                 if (GameObject.Find("GameManager").GetComponent<Data>().stackDFS.Count == 0)
                 {
                     gameManager.isSearching = false; // Para a busca
+                    // Informa ao usuário que não foi possível encontrar um caminho
+                    UnityEngine.Debug.Log("DFS: Nenhum caminho encontrado para o objetivo!");
                 }
             }
         }
