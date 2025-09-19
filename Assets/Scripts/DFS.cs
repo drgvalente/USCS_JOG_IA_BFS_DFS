@@ -44,6 +44,7 @@ public class DFS : MonoBehaviour
                     visitedNodes.Add(neighbor);
                     GameObject.Find("GameManager").GetComponent<Data>().stackDFS.Push(neighbor);
                     neighborFound = true;
+                    break;
                 }
             }
             if (!neighborFound)
