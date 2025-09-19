@@ -47,8 +47,12 @@ public class Node : MonoBehaviour
                 nodeType = NodeType.Floor; // Muda tipo para chão
                 GameObject.Find("GameManager").GetComponent<GameManager>().hasStart = false; // Marca que não há start
                 GameObject.Find("GameManager").GetComponent<GameManager>().isSearching = false; // Para a busca
+                GameObject.Find("GameManager").GetComponent<GameManager>().searchDone = false; // Para a animação
+                GameObject.Find("GameManager").GetComponent<Data>().queueBFS.Clear(); // Limpa fila do BFS
                 GameObject.Find("GameManager").GetComponent<Data>().stackDFS.Clear(); // Limpa pilha do DFS
                 GameObject.Find("GameManager").GetComponent<Data>().visitedNodes.Clear(); // Limpa nós visitados
+                // Reseta todos os nós visitados para Floor
+                ResetVisitedNodesToFloor();
             }
             // Se o nó clicado é o nó objetivo, remove-o
             else if (nodeType == NodeType.Goal)
@@ -58,8 +62,11 @@ public class Node : MonoBehaviour
                 nodeType = NodeType.Floor; // Muda tipo para chão
                 GameObject.Find("GameManager").GetComponent<GameManager>().hasGoal = false; // Marca que não há goal
                 GameObject.Find("GameManager").GetComponent<GameManager>().isSearching = false; // Para a busca
+                GameObject.Find("GameManager").GetComponent<GameManager>().searchDone = false; // Para a animação
                 GameObject.Find("GameManager").GetComponent<Data>().stackDFS.Clear(); // Limpa pilha do DFS
                 GameObject.Find("GameManager").GetComponent<Data>().visitedNodes.Clear(); // Limpa nós visitados
+                // Reseta todos os nós visitados para Floor
+                ResetVisitedNodesToFloor();
             }
             // Se o nó é um chão normal, define como start ou goal conforme necessário
             else
@@ -158,6 +165,32 @@ public class Node : MonoBehaviour
                 GetComponent<Renderer>().material = originalMaterial;
             }
             isAnimating = false; // Marca como não animando
+        }
+    }
+
+    // Método para resetar todos os nós visitados para Floor
+    private void ResetVisitedNodesToFloor()
+    {
+        // Encontra todos os nós na cena
+        Node[] allNodes = FindObjectsOfType<Node>();
+        
+        // Percorre todos os nós
+        foreach (Node node in allNodes)
+        {
+            // Para qualquer animação em andamento
+            if (node.isAnimating)
+            {
+                node.SetPathAnimation(false);
+            }
+            
+            // Se o nó não é Start, Goal nem Wall, reseta para Floor
+            if (node.nodeType != NodeType.Start && 
+                node.nodeType != NodeType.Goal && 
+                node.nodeType != NodeType.Wall)
+            {
+                node.nodeType = NodeType.Floor;
+                node.GetComponent<Renderer>().material = node.floor;
+            }
         }
     }
 }
