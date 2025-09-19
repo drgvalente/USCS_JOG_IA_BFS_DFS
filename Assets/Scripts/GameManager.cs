@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour
                 if (searchType == searchType.DFS)
                 {
                     DFS.PerformSearchStep();
-                    UnityEngine.Debug.Log(data.stackDFS.Count);
                 }
                 else if (searchType == searchType.BFS)
                 {
