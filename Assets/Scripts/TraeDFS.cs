@@ -2,39 +2,41 @@ using UnityEngine; // Importa as funcionalidades básicas do Unity
 using System.Collections.Generic; // Importa coleções genéricas como Stack e HashSet
 using System.Collections; // Importa IEnumerator para corrotinas
 
-// Classe que implementa o algoritmo Depth-First Search (DFS)
+// Classe que implementa o algoritmo Depth-First Search (DFS) com visualização
 public class TraeDFS : MonoBehaviour
 {
-    [Header("DFS Configuration")] // Cria uma seção no Inspector do Unity
+    // Seção de configuração do DFS no Inspector do Unity
+    [Header("DFS Configuration")]
     public Node startNode; // Nó inicial para começar a busca DFS
     
-    [Header("Visualization")] // Seção para configurações de visualização
-    public float searchDelay = 0.1f; // Delay entre cada passo da busca para visualização
+    // Seção de configurações de visualização no Inspector
+    [Header("Visualization")]
+    public float searchDelay = 0.1f; // Delay em segundos entre cada passo da busca para visualização
     
-    private bool isSearching = false; // Flag para controlar se uma busca está em andamento
+    // Variável privada para controlar se uma busca está em andamento
+    private bool isSearching = false;
 
     // Método público para iniciar a busca DFS
     public void StartDFS()
     {
-        // Verifica se já não está executando uma busca
+        // Verifica se já não está executando uma busca para evitar múltiplas execuções simultâneas
         if (!isSearching)
         {
-            StartCoroutine(DFSAlgorithm());
+            StartCoroutine(DFSAlgorithm()); // Inicia a corrotina do algoritmo DFS
         }
     }
 
-    // Método principal que executa o algoritmo DFS como corrotina
+    // Método principal que executa o algoritmo DFS como corrotina para permitir visualização
     private IEnumerator DFSAlgorithm()
     {
         // Marca que a busca está em andamento
         isSearching = true;
         
-        // Verifica se o nó inicial foi definido
+        // Verifica se o nó inicial foi definido antes de começar
         if (startNode == null)
         {
-            Debug.LogError("Nó inicial não foi definido!");
-            isSearching = false;
-            yield break;
+            isSearching = false; // Reseta o flag de busca
+            yield break; // Sai da corrotina se não há nó inicial
         }
         
         // Cria uma pilha (Stack) para armazenar os nós a serem visitados
@@ -48,45 +50,46 @@ public class TraeDFS : MonoBehaviour
         // Adiciona o nó inicial na pilha para começar a busca
         stack.Push(startNode);
         
-        // Marca o nó inicial como visitado
+        // Marca o nó inicial como visitado para evitar processá-lo novamente
         visited.Add(startNode);
 
-        // Loop principal: continua enquanto houver nós na pilha
+        // Loop principal: continua enquanto houver nós na pilha para processar
         while (stack.Count > 0)
         {
-            // Remove e obtém o nó do topo da pilha (comportamento LIFO)
+            // Remove e obtém o nó do topo da pilha (comportamento LIFO do DFS)
             Node currentNode = stack.Pop();
             
-            // Aplica material visual para mostrar o nó sendo processado
+            // Aplica material visual para mostrar o nó sendo processado atualmente
+            // Não altera a aparência dos nós especiais (Start e Goal)
             if (currentNode.nodeType != NodeType.Start && currentNode.nodeType != NodeType.Goal)
             {
                 currentNode.GetComponent<Renderer>().material = currentNode.actualWay;
             }
             
-            // Verifica se encontrou o objetivo
+            // Verifica se o nó atual é o objetivo da busca
             if (currentNode.nodeType == NodeType.Goal)
             {
-                Debug.Log("Objetivo encontrado!");
-                isSearching = false;
-                yield break;
+                isSearching = false; // Marca que a busca foi concluída
+                yield break; // Sai da corrotina pois encontrou o objetivo
             }
             
-            // Aguarda um tempo para visualização
+            // Aguarda um tempo configurado para permitir visualização do processo
             yield return new WaitForSeconds(searchDelay);
             
             // Itera através de todos os vizinhos do nó atual
             foreach (Node neighbor in currentNode.neighbors)
             {
-                // Verifica se o vizinho existe, não foi visitado e não é uma parede
+                // Verifica se o vizinho é válido: existe, não foi visitado e não é uma parede
                 if (neighbor != null && !visited.Contains(neighbor) && neighbor.nodeType != NodeType.Wall)
                 {
-                    // Adiciona o vizinho não visitado na pilha
+                    // Adiciona o vizinho não visitado na pilha para processamento futuro
                     stack.Push(neighbor);
                     
-                    // Marca o vizinho como visitado
+                    // Marca o vizinho como visitado para evitar processá-lo novamente
                     visited.Add(neighbor);
                     
-                    // Aplica material visual para mostrar nós possíveis
+                    // Aplica material visual para mostrar nós que podem ser explorados
+                    // Não altera a aparência dos nós especiais (Start e Goal)
                     if (neighbor.nodeType != NodeType.Start && neighbor.nodeType != NodeType.Goal)
                     {
                         neighbor.GetComponent<Renderer>().material = neighbor.possibleWay;
@@ -95,8 +98,7 @@ public class TraeDFS : MonoBehaviour
             }
         }
         
-        // Se chegou aqui, não encontrou o objetivo
-        Debug.Log("Objetivo não encontrado!");
-        isSearching = false;
+        // Se chegou aqui, a pilha está vazia e não encontrou o objetivo
+        isSearching = false; // Marca que a busca foi concluída sem sucesso
     }
 }
